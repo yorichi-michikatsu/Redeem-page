@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fear†Killer Booster Code Redeemer</title>
+  <style>
+    body {
+      background: #0e001a;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #b86bff;
+      text-shadow: 0 0 10px #c56eff;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+      border: none;
+      border-radius: 5px;
+    }
+    input {
+      width: 250px;
+    }
+    button {
+      background: #8000ff;
+      color: #fff;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      background: #2d003f;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #b86bff;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔓 Fear†Killer Booster Code Redeemer</h1>
+  <input type="text" id="codeInput" placeholder="Enter Booster Code" />
+  <button onclick="redeemCode()">Redeem</button>
+  <div class="result" id="resultBox"></div>
+
+<script>
+  const usedCodes = [];
+
+  function redeemCode() {
+    const input = document.getElementById("codeInput").value.trim().toUpperCase();
+    const resultBox = document.getElementById("resultBox");
+
+    // Updated pattern: supports 6–8 char suffix & includes RELIC
+    const pattern = /^FK-(RP|HP|LP|MRX|INT|RELIC)-([A-Z0-9]{6,8})$/;
+
+    if (usedCodes.includes(input)) {
+      resultBox.innerHTML = `<h2>⚠️ Code Already Used!</h2>`;
+    } else if (pattern.test(input)) {
+      const [, type, suffix] = input.match(pattern);
+      usedCodes.push(input);
+
+      const fullName = {
+        RP: "Rank Points",
+        HP: "Honor Points",
+        LP: "Legacy Points",
+        MRX: "Mental Resistance",
+        INT: "Instinct Level",
+        RELIC: "Relic"
+      };
+
+      let rewardText = "";
+
+      if (type === "RELIC") {
+        // Combo booster packs
+        const combos = [
+          { RP: 12, LP: 10, MRX: 8 },
+          { HP: 15, INT: 10, MRX: 5 },
+          { RP: 10, HP: 10, LP: 10 },
+          { INT: 15, MRX: 10, LP: 5 },
+          { RP: 8, LP: 12, HP: 10 },
+          { RP: 5, LP: 5, INT: 15 },
+          { MRX: 10, LP: 15, RP: 5 }
+        ];
+        const pack = combos[Math.floor(Math.random() * combos.length)];
+
+        rewardText = `<h3>🎁 Relic Booster Pack:</h3><ul style="list-style:none;padding:0;">`;
+        for (const key in pack) {
+          rewardText += `<li>+${pack[key]}% ${fullName[key]}</li>`;
+        }
+        rewardText += `</ul>`;
+      } else {
+        // Single stat boost
+        const boostPercent = Math.floor(Math.random() * 16) + 5; // 5–20%
+        rewardText = `🎁 Reward: <strong>+${boostPercent}% ${fullName[type]}</strong>`;
+      }
+
+      resultBox.innerHTML = `
+        <h2>✅ Booster Code Accepted!</h2>
+        <p><strong>${input}</strong></p>
+        <div>${rewardText}</div>
+      `;
+    } else {
+      resultBox.innerHTML = `<h2>❌ Invalid Code</h2><p>Example: FK-RP-NK9YM3TT or FK-RELIC-P75BUV</p>`;
+    }
+
+    resultBox.style.display = "block";
+  }
+</script>
+</body>
+</html>
