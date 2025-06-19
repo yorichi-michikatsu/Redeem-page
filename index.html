@@ -50,61 +50,120 @@
 <script>
   const usedCodes = [];
 
+  // Fixed booster packs (endlessly redeemable)
+  const fixedBoosters = {
+    "BOOSTER-RARE-001": {
+      title: "Rare Booster: Whispers of History",
+      lore: "A spark of memory from the Age of Settlement. Not all tales are forgotten.",
+      rewards: `
+        🌀 +1 RP (Rank Point)<br>
+        🪙 +1 HP (Honor Point)<br>
+        📦 1x Archive Fragment (lore collectible)<br>
+        🎖️ Title: Forgotten Wanderer
+      `
+    },
+    "BOOSTER-ELITE-002": {
+      title: "Elite Booster: Ashes of the Warborn",
+      lore: "Forged in the fires of Fire Gang, tempered by Cold†Fire's betrayal.",
+      rewards: `
+        🔥 +2 RP<br>
+        ⚔️ +2 HP<br>
+        🧬 +1 INT (Instinct Level)<br>
+        🧩 1x Memory Node (usable in Legends & Bonds)<br>
+        🎖️ Title: Rebellion Survivor
+      `
+    },
+    "BOOSTER-LEGEND-003": {
+      title: "Legendary Booster: Legacy Protocol Vault",
+      lore: "Only the chosen unlock this vault of legacy--sealed since Judgement Day.",
+      rewards: `
+        🧠 +3 RP<br>
+        👑 +3 HP<br>
+        🕶️ +2 MRX (Mental Resistance)<br>
+        📚 1x Secret Lore Log (from Archive of Forgotten Files)<br>
+        🎖️ Title: Protocol-Bearer
+      `
+    },
+    "BOOSTER-MYTHIC-004": {
+      title: "Mythic Booster: Echoes of the Lost Era",
+      lore: "From the final battle to the Phoenix's end, echoes still whisper through Methsana.",
+      rewards: `
+        🧠 +5 RP<br>
+        👑 +5 HP<br>
+        💀 +2 LP (Legacy Point)<br>
+        🌀 +2 MRX<br>
+        🧠 +2 INT<br>
+        🗝️ 1x Myth Relic (unlockable in Mythical Gang Vault)<br>
+        🎖️ Title: Echoborn Legend
+      `
+    }
+  };
+
   function redeemCode() {
     const input = document.getElementById("codeInput").value.trim().toUpperCase();
     const resultBox = document.getElementById("resultBox");
 
-    // Updated pattern: supports 6–8 char suffix & includes RELIC
+    // RELIC + STAT booster codes (one-time use)
     const pattern = /^FK-(RP|HP|LP|MRX|INT|RELIC)-([A-Z0-9]{6,8})$/;
 
-    if (usedCodes.includes(input)) {
-      resultBox.innerHTML = `<h2>⚠️ Code Already Used!</h2>`;
-    } else if (pattern.test(input)) {
-      const [, type, suffix] = input.match(pattern);
-      usedCodes.push(input);
-
-      const fullName = {
-        RP: "Rank Points",
-        HP: "Honor Points",
-        LP: "Legacy Points",
-        MRX: "Mental Resistance",
-        INT: "Instinct Level",
-        RELIC: "Relic"
-      };
-
-      let rewardText = "";
-
-      if (type === "RELIC") {
-        // Combo booster packs
-        const combos = [
-          { RP: 12, LP: 10, MRX: 8 },
-          { HP: 15, INT: 10, MRX: 5 },
-          { RP: 10, HP: 10, LP: 10 },
-          { INT: 15, MRX: 10, LP: 5 },
-          { RP: 8, LP: 12, HP: 10 },
-          { RP: 5, LP: 5, INT: 15 },
-          { MRX: 10, LP: 15, RP: 5 }
-        ];
-        const pack = combos[Math.floor(Math.random() * combos.length)];
-
-        rewardText = `<h3>🎁 Relic Booster Pack:</h3><ul style="list-style:none;padding:0;">`;
-        for (const key in pack) {
-          rewardText += `<li>+${pack[key]}% ${fullName[key]}</li>`;
-        }
-        rewardText += `</ul>`;
-      } else {
-        // Single stat boost
-        const boostPercent = Math.floor(Math.random() * 16) + 5; // 5–20%
-        rewardText = `🎁 Reward: <strong>+${boostPercent}% ${fullName[type]}</strong>`;
-      }
-
+    // Fixed booster pack?
+    if (fixedBoosters[input]) {
+      const pack = fixedBoosters[input];
       resultBox.innerHTML = `
-        <h2>✅ Booster Code Accepted!</h2>
-        <p><strong>${input}</strong></p>
-        <div>${rewardText}</div>
+        <h2>✅ ${pack.title}</h2>
+        <p><em>${pack.lore}</em></p>
+        <p>${pack.rewards}</p>
       `;
+    }
+    // RELIC or stat-based booster
+    else if (pattern.test(input)) {
+      if (usedCodes.includes(input)) {
+        resultBox.innerHTML = `<h2>⚠️ Code Already Used!</h2>`;
+      } else {
+        const [, type, suffix] = input.match(pattern);
+        usedCodes.push(input);
+
+        const fullName = {
+          RP: "Rank Points",
+          HP: "Honor Points",
+          LP: "Legacy Points",
+          MRX: "Mental Resistance",
+          INT: "Instinct Level",
+          RELIC: "Relic"
+        };
+
+        let rewardText = "";
+
+        if (type === "RELIC") {
+          const combos = [
+            { RP: 12, LP: 10, MRX: 8 },
+            { HP: 15, INT: 10, MRX: 5 },
+            { RP: 10, HP: 10, LP: 10 },
+            { INT: 15, MRX: 10, LP: 5 },
+            { RP: 8, LP: 12, HP: 10 },
+            { RP: 5, LP: 5, INT: 15 },
+            { MRX: 10, LP: 15, RP: 5 }
+          ];
+          const pack = combos[Math.floor(Math.random() * combos.length)];
+
+          rewardText = `<h3>🎁 Relic Booster Pack:</h3><ul style="list-style:none;padding:0;">`;
+          for (const key in pack) {
+            rewardText += `<li>+${pack[key]}% ${fullName[key]}</li>`;
+          }
+          rewardText += `</ul>`;
+        } else {
+          const boostPercent = Math.floor(Math.random() * 16) + 5;
+          rewardText = `🎁 Reward: <strong>+${boostPercent}% ${fullName[type]}</strong>`;
+        }
+
+        resultBox.innerHTML = `
+          <h2>✅ Booster Code Accepted!</h2>
+          <p><strong>${input}</strong></p>
+          <div>${rewardText}</div>
+        `;
+      }
     } else {
-      resultBox.innerHTML = `<h2>❌ Invalid Code</h2><p>Example: FK-RP-NK9YM3TT or FK-RELIC-P75BUV</p>`;
+      resultBox.innerHTML = `<h2>❌ Invalid Code</h2><p>Example: FK-RP-NK9YM3TT, FK-RELIC-P75BUV</p>`;
     }
 
     resultBox.style.display = "block";
